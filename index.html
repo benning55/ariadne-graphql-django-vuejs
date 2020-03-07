@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <title>Graphql</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+</head>
+
+<body>
+   <!-- partial:index.partial.html -->
+   <section class="get" id="app1">
+         <div class="container">
+            <h1>{{ example }}</h1>
+             <br><br>
+            <input class="btn btn-primary" @click.prevent="throwData" type="submit">
+         </div>
+   </section>
+
+   <!-- partial -->
+   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js"></script>
+   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+   <script>
+      var vm = new Vue({
+         el: "#app1",
+         data() {
+            return {
+                example: '',
+                car_id: 3
+            }
+         },
+
+         methods: {
+            throwData() {
+               axios.post('http://localhost:8000/graphql', {
+                  query: `{
+                      car (id: ${this.car_id}) {
+                          id
+                          name
+                          category {
+                              title
+                          }
+                      }
+                      people {
+                        username
+                      }
+                  }`
+               })
+                  .then(res => {
+                     console.log(res);
+                     this.example = res.data.data
+                  })
+                  .catch(e => {
+                     console.log(e);
+                     Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'There is no data of this person here.',
+                     })
+                  }),
+
+
+                  document.getElementById('circle').setAttribute('stroke-dasharray', "20, 100");
+            },
+         },
+      })
+   </script>
+
+</body>
+
+</html>

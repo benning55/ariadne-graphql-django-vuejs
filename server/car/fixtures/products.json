@@ -1,0 +1,38 @@
+[
+  {
+    "model":"car.Car",
+    "pk":1,
+    "fields":{
+        "name": "Tesla Motors",
+        "model": "Model S",
+    "price": 80000
+    }
+  },
+  {
+    "model":"car.Car",
+    "pk":2,
+    "fields":{
+        "name": "Aston Martin",
+        "model": "Vantage N430",
+    "price": 90000
+    }
+  },
+  {
+    "model":"car.Car",
+    "pk":3,
+    "fields":{
+        "name": "General Motors",
+        "model": "Cadillac Escalade",
+    "price": 79000
+    }
+  },
+  {
+    "model":"car.Car",
+    "pk":4,
+    "fields":{
+        "name": "Toyota",
+        "model": "Prius V",
+    "price": 31700
+    }
+  }
+]
