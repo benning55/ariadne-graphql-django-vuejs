@@ -1,8 +1,10 @@
-from ariadne import ObjectType, QueryType, gql, make_executable_schema
+from ariadne import ObjectType, QueryType, gql, make_executable_schema, MutationType
 from ariadne.asgi import GraphQL
 
 # Define types using Schema Definition Language (https://graphql.org/learn/schema/)
 # Wrapping string in gql function provides validation and better error traceback
+from django.contrib import auth
+
 from car.models import Car, Category
 
 type_defs = gql("""
@@ -10,6 +12,18 @@ type_defs = gql("""
         people: [Person!]!
         car(id: Int, price: Int): [Car!]!
         category: [Category]
+        benntend: String
+    }
+    
+    
+    type Mutation {
+        login(username: String!, password: String!): UsernameMutationPayload
+        logout: Boolean
+    }
+    
+    type UsernameMutationPayload {
+        status: Boolean!
+        user: Person
     }
 
     type Person {
@@ -26,6 +40,7 @@ type_defs = gql("""
         model: String
         price: Int
         category: Category
+        benning: String
     }
     
     type Category {
@@ -36,6 +51,11 @@ type_defs = gql("""
 
 # Map resolver functions to Query fields using QueryType
 query = QueryType()
+
+
+@query.field("benntend")
+def resolve_benntend(*_):
+    return "Benning Is Awsome!"
 
 
 # Resolvers are simple python functions
@@ -61,6 +81,30 @@ def resolve_car(*_, id=None, price=None):
     return Car.objects.all()
 
 
+mutation = MutationType()
+
+
+
+@mutation.field("login")
+def resolve_login(_, info, username, password):
+    request = info.context
+    user = auth.authenticate(username=username, password=password)
+    if user:
+        auth.login(request, user)
+        return True
+    return False
+
+
+@mutation.field("logout")
+def resolve_logout(_, info):
+    request = info.context
+    print(request.user)
+    if request.user.is_authenticated:
+        auth.logout(request)
+        return True
+    return False
+
+
 # Map resolver functions to custom type fields using ObjectType
 person = ObjectType("Person")
 
@@ -75,7 +119,7 @@ def resolve_username(obj, *_):
 
 
 # Create executable GraphQL schema
-schema = make_executable_schema(type_defs, query, person, car, category)
+schema = make_executable_schema(type_defs, query, mutation, person, car, category)
 
 # Create an ASGI app using the schema, running in debug mode
 app = GraphQL(schema, debug=True)
