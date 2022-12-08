@@ -2,7 +2,7 @@ aniso8601==7.0.0
 ariadne==0.10.0
 asgiref==3.2.3
 astroid==2.3.3
-certifi==2019.11.28
+certifi==2022.12.7
 Click==7.0
 Django==3.0.2
 django-cors-headers==3.2.1
